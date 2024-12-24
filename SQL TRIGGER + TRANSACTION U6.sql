@@ -1,0 +1,36 @@
+
+CREATE PROCEDURE spAsociarHabilidad
+@IdPokemon INT,
+@IdHabilidad INT
+AS
+
+BEGIN TRY
+	BEGIN TRANSACTION
+		INSERT INTO [Pokemons.Habilidades]
+		VALUES (@IdPokemon, @IdHabilidad)
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+	ROLLBACK TRANSACTION
+	--MENSAJE DE ERROR, SEVERITY = 1 A 25, STATUS 1 A 255
+	RAISERROR('ERROR', 16, 1)
+END CATCH
+
+CREATE TRIGGER	ValidarAsociarHabilidad
+ON [Pokemons.Habilidades]
+AFTER INSERT
+AS
+--INSERTED
+
+IF EXISTS (SELECT Nombre FROM Habilidades WHERE Id = 
+			(SELECT IdHabilidad FROM inserted) AND
+			IdTipo IN
+			(SELECT IdElemento FROM [Pokemons.Tipos] WHERE IdPokemon = 
+				(SELECT IdPokemon FROM inserted)))
+BEGIN
+	PRINT('CORRECTO');
+END
+ELSE
+BEGIN
+	RAISERROR('ERROR', 16, 1);
+END

@@ -1,0 +1,12 @@
+
+
+SELECT * FROM Elementos ORDER BY Id DESC 
+
+--Hasta que que no se confirme con COMMIT no se guarda
+BEGIN TRANSACTION
+INSERT ELEMENTOS VALUES (18, 'Llama')
+
+COMMIT TRANSACTION
+
+ROLLBACK TRANSACTION
+
